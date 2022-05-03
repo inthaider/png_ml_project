@@ -342,3 +342,4 @@ ppToICA/peak_patch_fields/fnl=1e4/tables/deltaN-LUT-1.875
 ppToICA/peak_patch_fields/fnl=1e4/tables/filter.dat
 ppToICA/peak_patch_fields/fnl=1e4/tables/FNL_spike_w3_piv12.dat
 ppToICA/peak_patch_fields/fnl=1e4/tables/planck18_intermittent.dat
+.gitconfig
