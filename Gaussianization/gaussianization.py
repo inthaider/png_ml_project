@@ -76,20 +76,20 @@ class Transform_Step(object):
         self.mean = mean
         return
 
-    def forward(x):
+    def forward(self, x):
         x = x-self.mean[:,np.newaxis]
         return self.cdf(self.rot@x)
 
-    def backward(y):
+    def backward(self, y):
         y = self.cdf_inv(y)
         y = self.rot.T@y
         y = y + self.mean[:,np.newaxis]
         return y
     
-    def cdf(samp):
+    def cdf(self, samp):
         return
 
-    def cdf_inv(samp):
+    def cdf_inv(self, samp):
         return
 
 class Function_Estimator(object):
