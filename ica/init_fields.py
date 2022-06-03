@@ -59,8 +59,8 @@ import sim_params
 
 l_mpc=0.0; l_array=0; l_buff=0; l_trim=0; fields_path : Path = Path()
 
-d_filename = 'Fvec_fNL_17Mpc_n1024_nb64_nt1'
-dg_filename = 'Fvec_17Mpc_n1024_nb64_nt1'
+d_filename = 'Fvec_17Mpc_n1024_nb64_nt1'
+dg_filename = 'rhog_17Mpc_n1024_nb64_nt1'
 z_filename = 'zetang_17Mpc_n1024_nb64_nt1'
 zg_filename = 'zetag_17Mpc_n1024_nb64_nt1'
 filenames = [d_filename, dg_filename, z_filename, zg_filename]
@@ -119,7 +119,7 @@ def get_delta_g(file_name: str = None):
 
     return delta_g
 
-def get_delta_ng(d_file_name: str = None, dg_file_name: str = None):
+def get_delta_ng(delta, delta_g):
     """Import nonG component of Delta (delta - delta_g = delta_ng).
 
     """
@@ -130,7 +130,7 @@ def get_delta_ng(d_file_name: str = None, dg_file_name: str = None):
     #     file_name = filenames[1]
 
     # nonG component of Delta
-    delta_ng = get_delta(d_file_name) - get_delta_g(dg_file_name)
+    delta_ng = delta - delta_g
     
     return delta_ng
 
@@ -142,7 +142,7 @@ def get_delta_all(d_file_name: str = None, dg_file_name: str = None):
     print('\nProcessing Delta fields/components...\n')
     delta = get_delta(d_file_name)
     delta_g = get_delta_g(dg_file_name)
-    delta_ng = get_delta_ng(d_file_name, dg_file_name)
+    delta_ng = get_delta_ng(delta, delta_g)
 
     return delta, delta_g, delta_ng
 
@@ -184,13 +184,13 @@ def get_zeta_g(file_name: str = None):
 
     return zeta_g
 
-def get_zeta_ng(z_file_name: str = None, zg_file_name: str = None):
+def get_zeta_ng(zeta, zeta_g):
     """Import nonG component of Zeta (zeta - zeta_g = zeta_ng).
 
     """
 
     # nonG component of Zeta
-    zeta_ng = get_zeta(z_file_name) - get_zeta_g(zg_file_name)
+    zeta_ng = zeta - zeta_g
 
     return zeta_ng
 
@@ -202,7 +202,7 @@ def get_zeta_all(z_file_name: str = None, zg_file_name: str = None):
     print('\nProcessing Zeta fields/components...\n')
     zeta = get_zeta(z_file_name)
     zeta_g = get_zeta_g(zg_file_name)
-    zeta_ng = get_zeta_ng(z_file_name, zg_file_name)
+    zeta_ng = get_zeta_ng(zeta, zeta_g)
 
     return zeta, zeta_g, zeta_ng
 

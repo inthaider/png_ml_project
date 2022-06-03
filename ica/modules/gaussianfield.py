@@ -15,8 +15,10 @@ window_gauss_log(g, N, k_center, k_width):
 window_gauss_norm(g, N, k_center, k_width):
 """
 
-import modules.fouriertransform as ft
 import numpy as np
+from scipy.signal.windows import general_hamming as hamming
+
+import modules.fouriertransform as ft
 
 def gauss_var(size, seed=None):
     if seed is not None:
@@ -79,8 +81,11 @@ def gaussian_random_field_1D(N, BoxSize=1.0, seed=None):
 # Top hat bands
 def window(g, N, k_low, k_up):
     x = np.fft.rfft(g)
+    # print(x[0:10])
 
     k = np.fft.fftfreq(N) * N
+    # print(k[0:10])
+
     # print(k[:N//2])
 
     k_low = np.ones(np.shape(x))*k_low
@@ -91,18 +96,26 @@ def window(g, N, k_low, k_up):
 
     return x_inv
 
-# # Gaussian bands
-# def window_gauss(g, N, k_center, k_width):
-#     x = np.fft.rfft(g)
-#     k = np.fft.fftfreq(N) * N
+# Hamming window filter
+def window_hamm(g, N, k_low, k_high):
+    """Apply Hamming window filter in k-space.
+    
+    """
+    x = np.fft.rfft(g)
 
-#     W = np.exp(-1/2*(k-k_center)**2/(k_width)**2)
-#     W_inv = np.fft.irfft(W, n=N)
+    k = np.fft.rfftfreq(N) * N
 
-#     x = x*W[:N//2+1]
-#     x_inv = np.fft.irfft(x)
+    k_range = k_high - k_low
+    hamm = np.zeros(np.shape(x))
+    hamm[k_low:k_high] = hamming(k_range, 0.5)
 
-#     return x_inv, W_inv
+    k_low = np.ones(np.shape(x))*k_low
+    k_high = np.ones(np.shape(x))*k_high
+
+    x = np.where(np.logical_and(np.less_equal(k, k_high), np.greater(k, k_low)), x, x*hamm)
+    x_inv = np.fft.irfft(x)
+
+    return x_inv, hamm
 
 # Gaussian bands with log spacing
 def window_gauss_log(g, N, k_center, k_width):
@@ -131,3 +144,16 @@ def window_gauss_norm(g, N, k_center, k_width):
     x_inv = np.fft.irfft(x)/norm
 
     return x_inv, W_inv/norm
+
+# # Gaussian bands
+# def window_gauss(g, N, k_center, k_width):
+#     x = np.fft.rfft(g)
+#     k = np.fft.fftfreq(N) * N
+
+#     W = np.exp(-1/2*(k-k_center)**2/(k_width)**2)
+#     W_inv = np.fft.irfft(W, n=N)
+
+#     x = x*W[:N//2+1]
+#     x_inv = np.fft.irfft(x)
+
+#     return x_inv, W_inv
