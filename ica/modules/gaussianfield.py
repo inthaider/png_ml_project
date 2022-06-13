@@ -20,16 +20,6 @@ from scipy.signal.windows import general_hamming as hamming
 
 import modules.fouriertransform as ft
 
-def gauss_var(size, seed=None):
-    if seed is not None:
-        np.random.seed(seed)
-    
-    u = np.random.uniform(size=size)
-    e = 2 * np.pi * np.random.uniform(size=size)
-    # a = np.sqrt(-2*np.log(u))
-    a = np.sqrt(-np.log(u))
-    
-    return a * (np.cos(e) + 1j * np.sin(e))
 
 def power_array(Pk, k):
     return np.where(k!=0, Pk(k), 0)
@@ -51,12 +41,22 @@ def gaussian_random_field(N, BoxSize=1.0, seed=None, Pk=lambda k: k**-3):
     s = np.sqrt(np.sum(out**2) / N**3)
     return out / s
     
+def gauss_var(size, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+    
+    u = np.random.uniform(size=size)
+    e = 2 * np.pi * np.random.uniform(size=size)
+    # a = np.sqrt(-2*np.log(u))
+    a = np.sqrt(-np.log(u))
+    
+    return a * (np.cos(e) + 1j * np.sin(e))
 
 # To generate 1D gaussian random field
 def gaussian_random_field_1D(N, BoxSize=1.0, seed=None):
     
     size = N//2 # Size of field is halved (floor division)
-    k_sq = ft.fftmodes(N)**2 # fftmodes returns the sample frequencies corresponding to the discrete FT
+    # k_sq = ft.fftmodes(N)**2 # fftmodes returns the sample frequencies corresponding to the discrete FT
     grid = np.arange(0, size) # 1D array with real-space positions
 
     g = gauss_var(size, seed) # Gaussian random deviate in Fourier(k)-spae
@@ -80,6 +80,7 @@ def gaussian_random_field_1D(N, BoxSize=1.0, seed=None):
 
 # Top hat bands
 def window(g, N, k_low, k_up):
+
     x = np.fft.rfft(g)
     # print(x[0:10])
 
