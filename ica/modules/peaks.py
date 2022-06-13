@@ -2,6 +2,10 @@ import numpy as np
 
 # Correlated peaks functions
 
+def map_asymm_sinh(x, w, alpha):
+    y = np.where(x<0, x, w * kth_root(np.sinh((x / w)**alpha), alpha))
+    return y #- np.mean(y)
+
 def kth_root(x, n):
     return np.where(x<0, -(-x)**(1/n), x**(1/n)).real
 
@@ -13,10 +17,6 @@ def map_sinh(x, w, alpha):
 def map_bypart(x, xp, a):
     y = np.where(x<xp, x, a*x)
     return y - np.mean(y)
-
-def map_asymm_sinh(x, w, alpha):
-    y = np.where(x<0, x, w * kth_root(np.sinh((x / w)**alpha), alpha))
-    return y #- np.mean(y)
 
 def map_bump(x, z1, z2):
     y = np.where(x<z1, x, np.where(x>z2, x, z1))
