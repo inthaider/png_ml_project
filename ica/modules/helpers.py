@@ -155,7 +155,7 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
     note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
     fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     
-    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_icafilt_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', bbox_inches='tight')
+    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_icafilt_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
     plt.show()
 
     return
