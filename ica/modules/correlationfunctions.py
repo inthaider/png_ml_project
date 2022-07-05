@@ -73,7 +73,7 @@ def pdf(x):
     n = len(phi)
     a = int(n**(1.7 / 3))
     phi_p = np.zeros(n + a)
-    phi_p[:-a] = phin
+    phi_p[:-a] = phi
     phi_m = np.zeros(n + a)
     phi_m[a:] = phi
     dphi = phi_p - phi_m

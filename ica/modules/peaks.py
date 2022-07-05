@@ -1,6 +1,9 @@
+from math import exp
 import numpy as np
 
 # Correlated peaks functions
+
+
 
 def map_asymm_sinh(x, w, alpha):
     y = np.where(x<0, x, w * kth_root(np.sinh((x / w)**alpha), alpha))
