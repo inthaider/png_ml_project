@@ -1,5 +1,5 @@
-import modules.fouriertransform as ft
 import numpy as np
+import modules.jaafar_fouriertransform as ft
 
 def get_bins(num, grid):
     mx = np.max(grid)

@@ -3,17 +3,10 @@
 
 """
 
-import importlib as il
-import copy
-from pathlib import Path # For path manipulations and module loading
 
 import numpy as np
-import matplotlib.pyplot as plt
-# plt.rcParams.update({'font.size': 12})
-# import matplotlib.gridspec as grd
-import pickle
+import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
 
-# import nbodykit.lab as nbkt
 
 def resid(a, b):
     """
@@ -156,6 +149,118 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
     fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     
     plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_icafilt_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
+    plt.show()
+
+    return
+
+
+def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
+    """
+
+    """
+
+    fzkt = np.abs(fzkt) / N
+    zkt = np.abs(zkt) / N
+
+    Nk = fzkt.shape[2]
+    nkbins = fzkt.shape[0]
+    ncomps = fzkt.shape[1]
+
+    #
+    #
+    # Plot
+    #
+    #
+    plt.rcParams.update({'font.size': fontsize})
+    nrows = nkbins + 1
+    ncols = 2
+
+    fig, ax = plt.subplots(nrows, 1, sharex='all', figsize=(8, 4*nrows), constrained_layout=True)
+
+    ax0 = ax[0]
+    for i in range(nkbins):
+        # if i == 0:
+        #     klow = kc[i]
+        #     khigh = kc[i+1]
+        # elif i < nkbins-1:
+        #     klow = kc[i-1]
+        #     khigh = kc[i+1]
+        # else:
+        #     klow = kc[i-1]
+        #     khigh = kc[i]
+            
+        if i < nkbins-1:
+            axx = ax[0].twinx()
+            color = 'tab:red'
+            axx.plot(np.nonzero(hannf[i, :])[0], hannf[i, hannf[i, :]!=0], color=color, alpha=0.4)
+            axx.tick_params(axis='y', labelcolor=color)
+            axx.tick_params(
+                axis='y',           # changes apply to the y-axis
+                which='both',       # both major and minor ticks are affected
+                right=False,        # ticks along the right edge are off
+                labelright=False)   # labels along the right edge are off
+        else:
+            axx = ax[0].twinx()
+            color = 'tab:red'
+            label = "Hann window"
+            axx.plot(hannf[i, :], label=label, color=color, alpha=0.4)
+            axx.tick_params(axis='y', labelcolor=color)
+            axx.set_ylabel('Window Amplitude', color=color)
+            axx.legend(loc=1)
+    
+    ax[0].set_title("Unfiltered k-frequencies with Hann")
+    label = "k-frequencies"
+    ax[0].plot(zkt[0, :], label=label)
+    ax[0].set(ylabel="k-amplitude (unfiltered)")
+    ax[0].legend(loc=2)
+
+    ax[0].text(0.5, 0.5, "UNFILTERED K-FREQUENCIES", 
+                    fontsize='xx-large', transform=ax[0].transAxes, 
+                        ha='center', va='center', alpha=0.4)
+
+    ax[1].set_title("Filtered k-frequencies with Hann")
+    for i in range(nkbins):
+        count = i+1
+        if i == 0:
+            klow = kc[i]
+            khigh = kc[i+1]
+        elif i < nkbins-1:
+            klow = kc[i-1]
+            khigh = kc[i+1]
+        else:
+            klow = kc[i-1]
+            khigh = kc[i]
+
+        klow = round(klow, 0); khigh = round(khigh, 0)
+
+
+        axx = ax[count].twinx()
+        color = 'tab:red'
+        axx.set_ylabel('Window Amplitude', color=color)
+        label = "Hann window"
+        axx.plot(hannf[i, :], label=label, color=color)
+        axx.tick_params(axis='y', labelcolor=color)
+        axx.legend(loc=1)
+
+        # ax[count, 0].sharey(ax00)
+        label = "k-frequencies"
+        ax[count].plot(fzkt[i, 0, :], label=label)
+        ax[count].set(ylabel=f'{count}) ' + "k amplitude with filter: " + r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh))
+        ax[count].legend(loc=2)
+        
+
+        ax[count].text(0.5, 0.5, r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh), 
+                                fontsize='xx-large', transform=ax[count].transAxes, 
+                                    ha='center', va='center', alpha=0.4)
+
+    ax_count = nkbins
+    ax[ax_count].set(xlabel=r'$k$')
+
+    fig.suptitle(rf'Hann window-filtering in Fourier-domain with $k: [{{{kc[0]}}}, {{{kc[-1]}}}]$.' + f'\nField size: {N}.', fontsize=16)
+
+    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_hann_s{N}_{int(kc[0])}to{int(kc[-1])}k{nkbins}.png', facecolor='white', bbox_inches='tight')
+    # note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
+    # fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     plt.show()
 
     return
