@@ -28,3 +28,5 @@ ica/modules/__pycache__/peaks.cpython-36.pyc
 ica/modules/__pycache__/peaks.cpython-37.pyc
 ica/modules/__pycache__/peaks.cpython-39.pyc
 ica/modules/__pycache__/peaks.cpython-310.pyc
+
+rica/torchvision_cifar10

@@ -1,9 +1,11 @@
+import numpy as np
 import torch
 from torch.nn import Parameter
 from torch.autograd import Variable
 import torchvision
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
+from torch.utils.data import TensorDataset, DataLoader
 import itertools
 
 """
@@ -26,7 +28,7 @@ patch_size = 16                 # patch size to extract, 16 is max
 weight_size= patch_size**2      # weight size is number of pixels in a patch (do not change)
 num_filters = weight_size       # complete-ICA has same number of filters as there are pixels
 lambdas = [l*0.4 for l in range(1,num_steps)] # the lambda values will be tried one by one
-torchvision_path_cifar10 = '/home/noid/data/torchvision_data/cifar10'
+torchvision_path_cifar10 = '/Users/JawanHaider/Desktop/research/research_projects/pnong_ml/rica/torchvision_cifar10'
 
 
 def maybe_gpu(data):
@@ -43,6 +45,12 @@ dataset = torchvision.datasets.CIFAR10(
             # normalize to 0-mean, unit-variance
         ]), 
         download=True)
+
+z_chisq_npy = np.load("np-1d_zeta_fields/z_chisq_seeds741785_501982")
+z_chisq = torch.Tensor(z_chisq_npy)
+dataset = TensorDataset(z_chisq) # create your datset
+dataset = DataLoader(dataset) # create your dataloader
+
 loader = torch.utils.data.DataLoader(dataset, batch_size=1000, num_workers=2, pin_memory=True)
 
 
