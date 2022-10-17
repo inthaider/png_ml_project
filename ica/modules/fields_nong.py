@@ -44,7 +44,8 @@ def nong_chisq(N, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_ratio=2
     #
     # FINAL CHI_e^2 NON-G COMPONENT
     #
-    ng_chisq = Fng * (grf.grf_chi_1d(N, Achi, Rchi, Bchi, kmaxknyq_ratio=kmnr, seed=seedchi))**2
+    grfchi = grf.grf_chi_1d(N, Achi, Rchi, Bchi, kmaxknyq_ratio=kmnr, seed=seedchi)
+    ng_chisq = Fng * (grfchi)**2
     ng_chisq = grf.dealiasx(ng_chisq, kmaxknyq_ratio=kmnr)
 
     # s = np.std(ng_chisq)
@@ -53,7 +54,7 @@ def nong_chisq(N, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_ratio=2
     # s = np.std(ng_chisq)
     # ng_chisq = (ng_chisq / s)
 
-    return ng_chisq
+    return ng_chisq, grfchi
 
 
 ### Asymmetric $\sinh$ non-Gaussianity
@@ -140,13 +141,13 @@ def nong_field_chisq(zg, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_
     #
     # FINAL CHI_e^2 NON-G COMPONENT
     #
-    ng_chisq = nong_chisq(N, Achi=Achi, Rchi=Rchi, Bchi=Bchi, Fng=Fng, kmaxknyq_ratio=kmnr, seedchi=seedchi)
+    ng_chisq, grfchi = nong_chisq(N, Achi=Achi, Rchi=Rchi, Bchi=Bchi, Fng=Fng, kmaxknyq_ratio=kmnr, seedchi=seedchi)
     #
     # FINAL ZETA FIELD
     #
     zng_chisq = nong_field(zg, ng_chisq)
 
-    return zng_chisq, ng_chisq
+    return zng_chisq, ng_chisq, grfchi
 
 
 

@@ -150,6 +150,9 @@ def fastica_run(mix, num_comps, max_iter=1e4, tol=1e-5,
 
     # run FastICA on observed (mixed) signals
     sources = transformer.fit_transform(mix.T)
+
+    print(transformer.components_.shape)
+    
     return sources.T
 
 
@@ -324,6 +327,23 @@ def ica_all(field_g, field_ng,
 
     return src, ica_src, np.array([src_max, ica_max]), np.array([mix_signal_pre, mix_signal]), ica_src_og
 
+
+def ica_all_unknownmix(obs_signal, num_comps=None, 
+            max_iter=1e5, tol=1e-5, fun='logcosh', whiten='unit-variance', algo='parallel', 
+                prewhiten = False, wbin_size = None):
+    """
+    
+    """
+
+    if prewhiten:
+        obs_signal = ica_prewhiten(obs_signal, wbin_size)
+
+    ica_src_og = fastica_run(obs_signal, num_comps, max_iter=max_iter, tol=tol, fun=fun, whiten=whiten, algo=algo)
+
+    ica_src = ica_src_og
+    # ica_src, src_max, ica_max = ica_restore(src, ica_src_og)
+
+    return ica_src
 
 
 
