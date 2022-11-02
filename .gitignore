@@ -30,3 +30,6 @@ ica/modules/__pycache__/peaks.cpython-39.pyc
 ica/modules/__pycache__/peaks.cpython-310.pyc
 
 rica/torchvision_cifar10
+
+/mnt/scratch-lustre/njcarlson/peak-patch-runs/ng7_test_oct6
+/mnt/scratch-lustre/njcarlson/peak-patch-runs/s4k_n236_nb20_nt10_ng6_nside2048

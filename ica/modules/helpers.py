@@ -9,8 +9,34 @@ import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
 
 
 def resid(a, b):
-    """
+    """Compute both scalar & vector residuals between $a$ & $b$.
+
+    Args:
+        a (): Vector.
+        b (): Vector.
+        
+    Returns:
+        rr (float?): Scalar residual of $a$ and $b$ (see below).
+        rv (): Vector residual of $a$ and $b$ (see below).
     
+
+    Notes:
+        1) Normalize $b$ by mean-subtraction & std-division.
+
+        2) Rescale $b$ by $a$'s std.
+        
+        3) The vector residual ($rv$) is calculated as:
+            rv = ( ( b.a / a.a ) * a ) / |a|
+        
+        4) The scalar residual ($rr$) is calculated as:
+            rr = 1 - | ( b.a / |a| ) / |a| |
+        
+        Note that:
+            |x| = (x.x)^{1/2}
+        where $x$ is a vector.
+
+    TODO:
+        FILL IN WHY I CHOSE TO COMPUTE $RV$ & $RR$ THIS WAY!
     """
     a_std = np.std(a)
     a_mean = np.mean(a)
@@ -59,7 +85,7 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
     nrows = nbins + 1
     ncols = 2
 
-    fig, ax = plt.subplots(nrows, ncols, sharex='all', figsize=(8*ncols, 4*nrows), constrained_layout=True)
+    fig, ax = plt.subplots(nrows, ncols, sharex='all', figsize=(9*ncols, 4*nrows), constrained_layout=True)
 
     offset = src_max[0]*1.8
     offset_ica = ica_max[0]*1.8
@@ -148,7 +174,7 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
     note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
     fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     
-    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_icafilt_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
+    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_kfica_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
     plt.show()
 
     return
@@ -258,7 +284,7 @@ def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
 
     fig.suptitle(rf'Hann window-filtering in Fourier-domain with $k: [{{{kc[0]}}}, {{{kc[-1]}}}]$.' + f'\nField size: {N}.', fontsize=16)
 
-    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/plots/icafiltered/chie2/chie2_hann_s{N}_{int(kc[0])}to{int(kc[-1])}k{nkbins}.png', facecolor='white', bbox_inches='tight')
+    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_hann_s{N}_{int(kc[0])}to{int(kc[-1])}k{nkbins}.png', facecolor='white', bbox_inches='tight')
     # note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
     # fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     plt.show()
