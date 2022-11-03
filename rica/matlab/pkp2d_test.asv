@@ -2,22 +2,48 @@
 %
 % Import files and extract data
 %
-files = {'/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk1_statex125_chi_ng6.mat'
-        '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk2_statex125_chi_ng6.mat'
-        '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk3_statex125_chi_ng6.mat'
-        '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk4_statex125_chi_ng6.mat'};
+% files = {'/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk1_statex125_chi_ng6.mat'
+% '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk2_statex125_chi_ng6.mat'
+% '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk3_statex125_chi_ng6.mat'
+% '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk4_statex125_chi_ng6.mat'};
 
+% Retrieve all the files in a directory
+folder = '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z_ching6_statex424_chunk16';
+filePattern = fullfile(folder, 'z2d_chunk*of*.mat');
+files = dir(filePattern);
+
+% files = {dirs.name};
+ngfolder = '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/zng_ching6_statex424_chunk16';
+ngfilePattern = fullfile(folder, 'zng2d_chunk*of*.mat');
+ngfiles = dir(filePattern);
+% ngdirs = dir('/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/zng_ching6_statex424_chunk16/zng2d_chunk*of*.mat');
+
+
+% files = {'data/2d_zeta_fields/z2d_chunk{i}_statex{idxx}_chi_ng6'.format(i=i+1, idxx=idx[0])
+%         '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk2_statex125_chi_ng6.mat'
+%         '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk3_statex125_chi_ng6.mat'
+%         '/fs/lustre/cita/haider/projects/pnong_ml/ica/data/2d_zeta_fields/z2dchunk4_statex125_chi_ng6.mat'};
 
 % Number of 'observed mixtures' we want to provide RICA
-nmix = 4;
+nmix = length(files);
 n = nmix;
 % Number of features/latent components we want to extract
-q = 4;
+q = 2;
 
-% Z = zeros(1000, 1000, nmix);
-Z = zeros(1000*1000, nmix);
+sizefield = 2000*2000;
+nchunks = nmix;
+sizechunk = sizefield/nchunks;
+lside = sqrt(sizechunk);
+nsidechunks = sqrt(nchunks);
+
+%%
+% Z = zeros(lside, lside, nmix);
+Z = zeros(sizechunk, nmix);
 for i = 1:n
-    test     = load(files{i});
+    baseFileName = files(i).name;
+    fullFileName = fullfile(files(i).folder, baseFileName);
+
+    test     = load(fullFileName);
     y        = test.y; % The apostrophe denotes transpose.
     ogzeta(:, :, i) = y;
     % Z(:,:,i)   = y;
@@ -28,8 +54,7 @@ mixdata = Z;
 
 rng default % For reproducibility
 
-zetas = reshape(mixdata, 1000, 1000, nmix);
-
+zetas = reshape(mixdata, lside, lside, nmix);
 
 
 %%
@@ -37,10 +62,10 @@ zetas = reshape(mixdata, 1000, 1000, nmix);
 figure
 figtitle = sgtitle("Fig. 1: 'Observed' Chi^2_e nonG Zeta Chunks");
 for i = 1:n
-    subplot(2,2,i)
+    subplot(nsidechunks,nsidechunks,i)
     imagesc(zetas(:,:,i))
     colormap('turbo');
-    clim([-0.0125, 0.025])
+    %clim([-0.0125, 0.025])
     colorbar
     title(['Zeta Chunk ',num2str(i)])
 end
@@ -88,7 +113,7 @@ W = randn(n,q);
 
 % Create hyperparameters for the objective function.
 iterlim = optimizableVariable('iterlim',[5,1e15],'Type','integer');
-lambda = optimizableVariable('lambda',[2.4,2.6]);
+lambda = optimizableVariable('lambda',[10,20]);
 gradtol = optimizableVariable('gradtol',[1e-12, 1e-6]);
 steptol = optimizableVariable('steptol', [1e-12, 1e-6]);
 vars = [iterlim, lambda, gradtol, steptol];
@@ -123,11 +148,11 @@ size(data.X)
 % Apply RICA
 %
 % iterlim = 1e14;
-% lambda = 10;
 % gradtol = 1e-10;
 % steptol = 1e-10;
 iterlim = optiterlim;
 lambda = optlambda;
+lambda = 10;
 gradtol = optgradtol;
 steptol = optsteptol;
 q = q;
@@ -144,7 +169,7 @@ ogunmixed = transform(Model,mixdata); % extract the unmixed comps
 for i = 1:q
     ogunmixed(:,i) = ogunmixed(:,i)/norm(ogunmixed(:,i))*norm(mixdata(:,1));
 end
-unmixed = reshape(ogunmixed, 1000, 1000, q) / 400;
+unmixed = reshape(ogunmixed, lside, lside, q) / 400;
 
 
 
@@ -153,7 +178,10 @@ unmixed = reshape(ogunmixed, 1000, 1000, q) / 400;
 %%
 % Plot the extracted/unmixed signals
 %
-figure
+f = figure;
+w = 200*n;
+h = 150*2;
+f.Position = [5 5 w h];
 figtitle = sgtitle('Fig. 2: Prelim RICA unmixed Chi^2_e nonG Zeta');
 for i = 1:n
     subplot(2,n,i)
@@ -181,21 +209,21 @@ end
 % Fix parity and reorder unmixed
 
 % Fix parity of unmixed signals:
-unmixedre = zeros(1000, 1000, q);
-unmixedre(:,:,1) = -unmixed(:,:,1); 
-unmixedre(:,:,2) = -unmixed(:,:,2); 
-unmixedre(:,:,3) = unmixed(:,:,3);
-unmixedre(:,:,4) = -unmixed(:,:,4);
+unmixedre = zeros(lside, lside, q);
+unmixedre(:,:,1) = unmixed(:,:,1); 
+unmixedre(:,:,2) = unmixed(:,:,2); 
+% unmixedre(:,:,3) = unmixed(:,:,3);
+% unmixedre(:,:,4) = -unmixed(:,:,4);
 
 % Reorder the unmixed signals correctly
-unmixedfinal = unmixedre(:,:,[3,2,4,1]);
-%unmixedfinal = unmixedre(:,:,[1,2]);
-%zetasre = zetas(:,:,[1,4,2,3]);
-zetasre = zetas;
+% unmixedfinal = unmixedre(:,:,[3,2,4,1]);
+unmixedfinal = unmixedre(:,:,[1,2]);
+zetasre = zetas(:,:,[13, 2]);
+% zetasre = zetas;
 
 % Rescale unmixed signals
 for i = 1:q
-    unmixedfinal(:,:,i) = unmixedfinal(:,:,i)/norm(unmixedfinal(:,:,i))*norm(ogzeta(:,:,i));
+    unmixedfinal(:,:,i) = unmixedfinal(:,:,i)/norm(unmixedfinal(:,:,i))*norm(zetasre(:,:,i));
 end
 
 
@@ -205,7 +233,7 @@ end
 % Plot the extracted/unmixed signals in the right order
 
 f = figure;
-f.Position = [5 5 1500 545];
+f.Position = [5 5 1000 500];
 figtitle = sgtitle(sprintf("Fig. 3: RICA unmixed Chi^2_e nonG Zeta: Separation with q=%d ICs.", q));
 for i = 1:n
     subplot(2,n,i)
@@ -227,7 +255,7 @@ for i = 1:n
     hold on;
 end
 hold off;
-exportgraphics(gcf, sprintf('figs/pkp2dzeta/pkp-2dzeta_rica_unmix-chi_ng6_q%d.png', q))
+exportgraphics(gcf, sprintf('figs/pkp2dzeta/pkp-2dzetachunks%d_rica_unmix-chi_ng6_q%d.png', nchunks, q))
 
 
 

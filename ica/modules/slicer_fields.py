@@ -29,6 +29,10 @@ Example Peak-Patch realization:
                 Then there’s 3D fields in the “fields" subdirectory, and there’s 2D healpix maps in the “maps" subdirectory, you can play with those with python using healpy.
             /mnt/scratch-lustre/njcarlson/peak-patch-runs/s4k_n236_nb20_nt10_ng6_nside2048/fnl5e3/
 
+TODO
+----
+Write necessary code to be able to turn Delta fields processing on or off.
+
 """
 
 #----Import modules----#
@@ -210,7 +214,7 @@ class Slicer2D:
 
         return
 
-    def slice_2d(self, is_rand_axes : bool = True):    
+    def slice_2d(self, is_rand_axes : bool = True, isDelta=False):    
         """Extract 1D strips from the 3D fields.
 
         Args:
@@ -219,12 +223,16 @@ class Slicer2D:
         
         Returns:
             fields_1d (): 1D strips corresponding to list of 3D fields in 'field_3d'.
+
+        TODO:
+            Write necessary code to be able to turn Delta fields processing on or off.
         """
 
         self.idx_rand_slice(is_rand_axes)
         
         indices = self.indices
         fields_3d = self.fields_3d
+        print(type(fields_3d), len(fields_3d))
 
         self.fields_2d = [i[indices] for i in fields_3d]
 

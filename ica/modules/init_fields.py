@@ -46,6 +46,9 @@ Example Peak-Patch realization:
                 Then there’s 3D fields in the “fields" subdirectory, and there’s 2D healpix maps in the “maps" subdirectory, you can play with those with python using healpy.
             /mnt/scratch-lustre/njcarlson/peak-patch-runs/s4k_n236_nb20_nt10_ng6_nside2048/fnl5e3/
             
+TODO
+----
+Write necessary code to be able to turn Delta fields processing on or off.
 
 """
 
@@ -214,6 +217,7 @@ def get_zeta_g(file_name: str = None):
         file_name = filenames[3]
 
     # Gaussian zeta field
+    print(fields_path/file_name)
     zeta_g_file = fields_path/file_name
     in_zeta_g   = open(zeta_g_file, 'rb')
     # Read in zeta_g, reshape it into an nxnxn, and then trim off buffers
@@ -271,6 +275,8 @@ def get_meshgrid(field_side_mpc, array_side: int):
 def main(path_realization: str | Path = None, lengths=None, isDelta=False):
     """Main function.
 
+    TODO:
+        Write necessary code to be able to turn Delta fields processing on or off.
     """
 
     import_params(path_realization, lengths[0], lengths[1], lengths[2])
@@ -278,9 +284,10 @@ def main(path_realization: str | Path = None, lengths=None, isDelta=False):
     """Import Delta fields"""
     if isDelta:
         delta, delta_g, delta_ng = get_delta_all(d_filename, dg_filename)
-    else:
-        delta, delta_g, delta_ng = (None, None, None)
-        print("\n NOTE: Not extracting Delta fields (Deltas returned will be valued 'None'.)... \n")
+    # else:
+    #     delta, delta_g, delta_ng = (None, None, None)
+    #     print("\n NOTE: Not extracting Delta fields (Deltas returned will be valued 'None'.)... \n")
+
     """Import Zeta fields"""
     zeta, zeta_g, zeta_ng = get_zeta_all(z_filename, zg_filename)
 
@@ -304,7 +311,7 @@ def main(path_realization: str | Path = None, lengths=None, isDelta=False):
     print('Zeta nonG-comp ({}, {}, {}):         '.format(x, y, z), zeta_ng[x,y,z])
     print('Zeta total ({}, {}, {}):             '.format(x, y, z), zeta[x,y,z])
 
-    return delta, delta_g, delta_ng, zeta, zeta_g, zeta_ng
+    return [delta, delta_g, delta_ng, zeta, zeta_g, zeta_ng] if isDelta else [zeta, zeta_g, zeta_ng]
 
 #--------------------------------------------------#
 
