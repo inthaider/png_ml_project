@@ -2,8 +2,6 @@
 // Created by Jibran Haider. //
 
 """
-
-
 import numpy as np
 import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
 
@@ -12,28 +10,29 @@ def resid(a, b):
     """Compute both scalar & vector residuals between $a$ & $b$.
 
     Args:
-        a (): Vector.
-        b (): Vector.
+        a (np.ndarray): Vector $a$.
+        b (np.ndarray): Vector $b$. Must be same shape as $a$.
         
     Returns:
-        rr (float?): Scalar residual of $a$ and $b$ (see below).
-        rv (): Vector residual of $a$ and $b$ (see below).
-    
+        rr (float): Scalar residual of $a$ and $b$ (see below).
+        rv (np.ndarray): Vector residual of $a$ and $b$ (see below).
 
     Notes:
-        1) Normalize $b$ by mean-subtraction & std-division.
-
-        2) Rescale $b$ by $a$'s std.
-        
-        3) The vector residual ($rv$) is calculated as:
-            rv = ( ( b.a / a.a ) * a ) / |a|
-        
-        4) The scalar residual ($rr$) is calculated as:
-            rr = 1 - | ( b.a / |a| ) / |a| |
-        
-        Note that:
-            |x| = (x.x)^{1/2}
-        where $x$ is a vector.
+        Scalar residual $r$ is defined as:
+            $r = 1 - \frac{\left\|a\right\|_2}{\left\|b\right\|_2}$
+        Vector residual $r_v$ is defined as:
+            $r_v = 1 - \frac{\left\|a\right\|_2}{\left\|b\right\|_2}$
+        where $\left\|a\right\|_2$ is the 2-norm of $a$ and $\left\|b\right\|_2$ is the 2-norm of $b$.
+        Details:
+            1) Normalize $b$ by mean-subtraction & std-division.
+            2) Rescale $b$ by $a$'s std.
+            3) The vector residual ($rv$) is calculated as:
+                rv = ( ( b.a / a.a ) * a ) / |a|
+            4) The scalar residual ($rr$) is calculated as:
+                rr = 1 - | ( b.a / |a| ) / |a| |
+            Note that:
+                |x| = (x.x)^{1/2}
+            where $x$ is a vector.
 
     TODO:
         FILL IN WHY I CHOSE TO COMPUTE $RV$ & $RR$ THIS WAY!
@@ -65,9 +64,24 @@ def resid(a, b):
     return rr, rv
 
 
-def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
-    """
+def plt_icaflt(src, ica_src, kc, max_amps, fontsize=8):
+    """Plot source components and ICA-separated signals.
 
+    Args:
+        src (np.ndarray): Source components.
+        ica_src (np.ndarray): ICA-separated signals.
+        kc (np.ndarray): Wavenumber bin limits.
+        max_amps (np.ndarray): Maximum amplitudes of source components and ICA-separated signals.
+        fontsize (int): Font size for plots.
+
+    Returns:
+        None
+
+    Notes:
+        1) Unfiltered source components are plotted in the top row.
+        2) Filtered source components are plotted in the subsequent rows.
+        3) The first column plots the source components.
+        4) The second column plots the ICA-separated signals.
     """
 
     N = src.shape[2]
@@ -81,11 +95,22 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
     #
     #
     src_max, ica_max = max_amps[0, 0, :], max_amps[0, 1, :]
-    plt.rcParams.update({'font.size': fontsize})
     nrows = nbins + 1
     ncols = 2
 
-    fig, ax = plt.subplots(nrows, ncols, sharex='all', figsize=(9*ncols, 4*nrows), constrained_layout=True)
+    SMALL_SIZE = fontsize
+    MEDIUM_SIZE = SMALL_SIZE+2
+    BIGGER_SIZE = MEDIUM_SIZE+2
+
+    plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=SMALL_SIZE-2)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=SMALL_SIZE-2)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+    # plt.rcParams.update({'font.size': fontsize})
+    fig, ax = plt.subplots(nrows, ncols, sharex='all', figsize=(6*ncols, 3*nrows), constrained_layout=True)
 
     offset = src_max[0]*1.8
     offset_ica = ica_max[0]*1.8
@@ -99,7 +124,7 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
         else:
             label = "Gaussian Component"
         ax[0, 0].plot(src[0, j, :] + offset*j, label=label)
-    ax[0, 0].set(ylabel="Zeta amplitude without filtering.")
+    ax[0, 0].set(ylabel=r"$\zeta$ amplitude (unfiltered)")
     ax[0, 0].legend(loc=1)
 
     ax01 = ax[0, 1]
@@ -147,7 +172,8 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
             else:
                 label = "Gaussian Component"
             ax[count, 0].plot(src[count, j, :] + offset_*j, label=label)
-        ax[count, 0].set(ylabel=f'{i+1}) ' + "Zeta Amplitude with filter: " + r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh))
+        # ax[count, 0].set(ylabel=f'{i+1}) ' + "Zeta Amplitude with filter: " + r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh))
+        ax[count, 0].set(ylabel=f'{i+1}) ' + r"$\zeta$ amplitude")
         
         # ax[count, 1].sharey(ax00)
         # Plotting ICA-separated signals
@@ -159,30 +185,43 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=7):
             ax[count, 1].plot(ica_src[count, j, :] + offset_ica_*j, label=label) # Amplitudes are scaled arbitrarily because ICA doesn't recover amp
 
         ax[count, 0].text(0.5, 0.5, r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh), 
-                                fontsize='xx-large', transform=ax[count, 0].transAxes, 
+                                fontsize='x-large', transform=ax[count, 0].transAxes, 
                                     ha='center', va='center', alpha=0.4)
         ax[count, 1].text(0.5, 0.5, r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh), 
-                                fontsize='xx-large', transform=ax[count, 1].transAxes, 
+                                fontsize='x-large', transform=ax[count, 1].transAxes, 
                                     ha='center', va='center', alpha=0.4)
 
-    ax_count = kc_size-1
+    ax_count = kc_size
     ax[ax_count, 0].set(xlabel=r'$x$')
     ax[ax_count, 1].set(xlabel=r'$x$')
 
-    fig.suptitle(rf'Filtered $\it{{FastICA}}$-separation with $k: [{{{kc[0]}}}, {{{kc[-1]}}}]$.' + f'\nField size: {N}.', fontsize=16)
+    fig.suptitle(rf'Filtered $\it{{FastICA}}$-separation with $k: [{{{kc[0]}}}, {{{kc[-1]}}}]$.' + f'\nField size: {N}.', fontsize=BIGGER_SIZE)
 
     note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
-    fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
-    
-    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_kfica_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
+    fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=MEDIUM_SIZE)
+
+    plt.savefig(f'/Users/JawanHaider/Desktop/research/research_projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_kfica_s{N}_{int(kc[0])}to{int(kc[-1])}k{nbins}.png', facecolor='white', bbox_inches='tight')
     plt.show()
 
     return
 
 
-def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
-    """
+def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=8):
+    """Plots the filters used in the filtering process.
 
+    Args:
+        N (int): Field size.
+        kc (np.ndarray): Wavenumber bins limits.
+        fzkt (np.ndarray): Filtered Fourier transform of the source components.
+        zkt (np.ndarray): Fourier transform of the source components.
+        hannf (np.ndarray): Hann window.
+        fontsize (int, optional): Font size. Defaults to 8.
+
+    Returns:
+        None: Plots the filters used in the filtering process.
+
+    Notes:
+        The filters are plotted in the frequency domain.
     """
 
     fzkt = np.abs(fzkt) / N
@@ -197,11 +236,22 @@ def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
     # Plot
     #
     #
-    plt.rcParams.update({'font.size': fontsize})
     nrows = nkbins + 1
     ncols = 2
 
-    fig, ax = plt.subplots(nrows, 1, sharex='all', figsize=(8, 4*nrows), constrained_layout=True)
+    SMALL_SIZE = fontsize
+    MEDIUM_SIZE = SMALL_SIZE+2
+    BIGGER_SIZE = MEDIUM_SIZE+2
+
+    plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=SMALL_SIZE-2)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=SMALL_SIZE-2)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+    # plt.rcParams.update({'font.size': fontsize})
+    fig, ax = plt.subplots(nrows, 1, sharex='all', figsize=(6, 3*nrows), constrained_layout=True)
 
     ax0 = ax[0]
     for i in range(nkbins):
@@ -237,7 +287,7 @@ def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
     ax[0].set_title("Unfiltered k-frequencies with Hann")
     label = "k-frequencies"
     ax[0].plot(zkt[0, :], label=label)
-    ax[0].set(ylabel="k-amplitude (unfiltered)")
+    ax[0].set(ylabel=r"$k$ amplitude (unfiltered)")
     ax[0].legend(loc=2)
 
     ax[0].text(0.5, 0.5, "UNFILTERED K-FREQUENCIES", 
@@ -271,22 +321,35 @@ def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=7):
         # ax[count, 0].sharey(ax00)
         label = "k-frequencies"
         ax[count].plot(fzkt[i, 0, :], label=label)
-        ax[count].set(ylabel=f'{count}) ' + "k amplitude with filter: " + r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh))
+        # ax[count].set(ylabel=f'{count}) ' + "k amplitude with filter: " + r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh))
+        ax[count].set(ylabel=f'{count}) ' + r"$k$ amplitude")
         ax[count].legend(loc=2)
         
 
         ax[count].text(0.5, 0.5, r"$k=[{{{kl}}}, {{{kh}}}]$".format(kl=klow, kh=khigh), 
-                                fontsize='xx-large', transform=ax[count].transAxes, 
+                                fontsize='x-large', transform=ax[count].transAxes, 
                                     ha='center', va='center', alpha=0.4)
 
     ax_count = nkbins
     ax[ax_count].set(xlabel=r'$k$')
 
-    fig.suptitle(rf'Hann window-filtering in Fourier-domain with $k: [{{{kc[0]}}}, {{{kc[-1]}}}]$.' + f'\nField size: {N}.', fontsize=16)
+    fig.suptitle(rf'Hann window-filtering in Fourier domain: $k=[{{{kc[0]}}}, {{{kc[-1]}}}]$' + f'\nField size: {N}.', fontsize=BIGGER_SIZE)
 
-    plt.savefig(f'/fs/lustre/cita/haider/projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_hann_s{N}_{int(kc[0])}to{int(kc[-1])}k{nkbins}.png', facecolor='white', bbox_inches='tight')
+    import os
+    print(os.getcwd())  
+    plt.savefig(f'/Users/JawanHaider/Desktop/research/research_projects/pnong_ml/ica/figures/icafiltered/chie2/chie2_hann_s{N}_{int(kc[0])}to{int(kc[-1])}k{nkbins}.png', facecolor='white', bbox_inches='tight')
     # note="Note: The Gaussian components are manually offset up from 0 for the purpose of clarity."
     # fig.text(0.5, -0.01, note, wrap=True, horizontalalignment='center', fontsize=8)
     plt.show()
 
     return
+
+
+
+
+
+
+
+
+
+

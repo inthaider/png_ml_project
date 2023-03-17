@@ -44,7 +44,7 @@ def window_tophat(g, N, k_low, k_up):
 
     # print(k[:N//2])
 
-    k_low = np.ones(np.shape(x))*k_low
+    k_low = np.ones(np.shape(x))*k_low 
     k_up = np.ones(np.shape(x))*k_up
 
     print('x[0] before:', np.abs(x[0]))
