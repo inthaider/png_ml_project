@@ -5,29 +5,7 @@ ica/__pycache__/
 ica/__pycache__/ica_test_Jonathan.cpython-39.pyc
 ica/__pycache__/ica_test_Jonathan.cpython-310.pyc
 
-ica/modules/__pycache__/colorednoise.cpython-36.pyc
-ica/modules/__pycache__/colorednoise.cpython-39.pyc
-ica/modules/__pycache__/colorednoise.cpython-310.pyc
-ica/modules/__pycache__/correlationfunctions.cpython-36.pyc
-ica/modules/__pycache__/correlationfunctions.cpython-37.pyc
-ica/modules/__pycache__/correlationfunctions.cpython-39.pyc
-ica/modules/__pycache__/correlationfunctions.cpython-310.pyc
-ica/modules/__pycache__/filters.cpython-36.pyc
-ica/modules/__pycache__/filters.cpython-37.pyc
-ica/modules/__pycache__/filters.cpython-39.pyc
-ica/modules/__pycache__/filters.cpython-310.pyc
-ica/modules/__pycache__/fouriertransform.cpython-36.pyc
-ica/modules/__pycache__/fouriertransform.cpython-37.pyc
-ica/modules/__pycache__/fouriertransform.cpython-39.pyc
-ica/modules/__pycache__/fouriertransform.cpython-310.pyc
-ica/modules/__pycache__/gaussianfield.cpython-36.pyc
-ica/modules/__pycache__/gaussianfield.cpython-37.pyc
-ica/modules/__pycache__/gaussianfield.cpython-39.pyc
-ica/modules/__pycache__/gaussianfield.cpython-310.pyc
-ica/modules/__pycache__/peaks.cpython-36.pyc
-ica/modules/__pycache__/peaks.cpython-37.pyc
-ica/modules/__pycache__/peaks.cpython-39.pyc
-ica/modules/__pycache__/peaks.cpython-310.pyc
+ica/modules/__pycache__/
 
 rica/torchvision_cifar10
 
