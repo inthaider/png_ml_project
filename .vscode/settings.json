@@ -1,5 +1,7 @@
 {
     "python.linting.enabled": true,
     "python.analysis.typeCheckingMode": "off",
-    "docwriter.style": "NumPy"
+    "docwriter.style": "NumPy",
+    "docwriter.progress.trackClasses": true,
+    "docwriter.progress.trackTypes": true
 }

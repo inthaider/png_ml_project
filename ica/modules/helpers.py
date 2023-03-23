@@ -1,7 +1,36 @@
-"""
-// Created by Jibran Haider. //
+#
+# Created by Jibran Haider.
+#
+"""Helper functions for ICA.
+
+This module contains helper functions for ICA that can be used to calculate
+residuals between two vectors, plot source components and ICA-separated
+signals, and plot the ICA filter used for $kf$-ICA separation.
+
+Routine Listings
+----------------
+resid(a, b)
+    Compute both scalar & vector residuals between $a$ & $b$.
+plt_icaflt(src, ica_src, kc, max_amps, fontsize=8)
+    Plot source components and ICA-separated signals
+plt_filters(ica, kc, max_amps, fontsize=8)
+    Plot the ICA filter used for $kf$-ICA separation.
+
+See Also
+--------
+ica.modules.ica
+
+Notes
+-----
+1) The function `resid` is used to calculate the scalar & vector residuals
+        between two vectors.
+2) The function `plt_icaflt` is used to plot the source components and
+        ICA-separated signals.
+3) The function `plt_filters` is used to plot the ICA filter used for
+        $kf$-ICA separation.
 
 """
+
 import numpy as np
 import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
 
@@ -71,25 +100,32 @@ def resid(a, b):
 
 
 def plt_icaflt(src, ica_src, kc, max_amps, fontsize=8):
-    """Plot source components and ICA-separated signals.
-
-    Args:
-        src (np.ndarray): Source components.
-        ica_src (np.ndarray): ICA-separated signals.
-        kc (np.ndarray): Wavenumber bin limits.
-        max_amps (np.ndarray): Maximum amplitudes of source components and ICA-separated signals.
-        fontsize (int): Font size for plots.
-
-    Returns:
+    '''Plot source components and ICA-separated signals
+    
+    Parameters
+    ----------
+    src
+        Source components.
+    ica_src
+        ICA-separated signals
+    kc
+        wavenumber bin limits
+    max_amps
+        Maximum amplitudes of source components and ICA-separated signals.
+    fontsize, optional
+        Font size for plots.
+    
+    Returns
+    -------
         None
 
-    Notes:
+    Notes
+    -----
         1) Unfiltered source components are plotted in the top row.
         2) Filtered source components are plotted in the subsequent rows.
         3) The first column plots the source components.
         4) The second column plots the ICA-separated signals.
-    """
-
+    '''
     N = src.shape[2]
     nbins = src.shape[0] - 1
     num_comps = src.shape[1]
@@ -213,23 +249,31 @@ def plt_icaflt(src, ica_src, kc, max_amps, fontsize=8):
 
 
 def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=8):
-    """Plots the filters used in the filtering process.
+    '''Plot the filters used in the filtering process.
+    
+    Parameters
+    ----------
+    N
+        field size
+    kc
+        The wavenumber bins limits.
+    fzkt
+        Filtered Fourier transform of the source components.
+    zkt
+        Fourier transform of the source components.
+    hannf
+        Hann window
+    fontsize, optional
+        Font size.
+    
+    Returns
+    -------
+        None. Plots the filters used in the filtering process.
 
-    Args:
-        N (int): Field size.
-        kc (np.ndarray): Wavenumber bins limits.
-        fzkt (np.ndarray): Filtered Fourier transform of the source components.
-        zkt (np.ndarray): Fourier transform of the source components.
-        hannf (np.ndarray): Hann window.
-        fontsize (int, optional): Font size. Defaults to 8.
-
-    Returns:
-        None: Plots the filters used in the filtering process.
-
-    Notes:
+    Notes
+    -----
         The filters are plotted in the frequency domain.
-    """
-
+    '''
     fzkt = np.abs(fzkt) / N
     zkt = np.abs(zkt) / N
 
@@ -349,13 +393,3 @@ def plt_filters(N, kc, fzkt, zkt, hannf, fontsize=8):
     plt.show()
 
     return
-
-
-
-
-
-
-
-
-
-

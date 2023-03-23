@@ -1,15 +1,47 @@
+# 
+# Created by Jaafar.
+# Modified by Jibran Haider & Tom Morrison.
+# 
+"""This module contains functions for generating initial conditions for the 1D \zeta and \chi_e^2 Gaussian Random Fields (GRFs).
+
+Routine Listings
+----------------
+gauss_var
+    Generates a complex Gaussian random variable in Fourier space with zero mean and unit variance.
+dealiasx
+    Dealias a real space field and return the de-aliased field in real space domain.
+dealiask
+    Dealias a Fourier space field and return the de-aliased field in Fourier space domain.
+
+
+pk_primordial_1d
+    Returns the primordial power spectrum for a pure 1D \zeta GRF.
+grf_zeta_1d
+    Generate a 1D \zeta GRF with power spectrum given by the primordial power spectrum.
+
+    
+pk_primordial_3d
+    Returns the primordial power spectrum for a pure 3D \zeta GRF.
+grf_zeta_3d_los1d
+    Generate a 1D \zeta GRF from the power spectrum for a 3D
+    \zeta GRF (acts as a line-of-sight 1D strip).
+
+
+pk_chi_1d
+    Returns the power spectrum for a 1D \chi_e^2 GRF.
+grf_chi_1d
+    Generate a 1D \chi_e^2 GRF from the power spectrum for a 1D \chi_e^2 GRF.
+
+    
+pk_chi_3d
+    Returns the power spectrum for a 3D \chi_e^2 GRF.
+grf_chi_3d_los1d
+    Generate a 1D, 'Line-Of-Sight' \chi_e^2 GRF from the power spectrum 
+    generated for a 3D \chi_e^2 GRF.
+
 """
-// Created by Jaafar.
-Modified by Jibran Haider & Tom Morrison. //
-
-
-**Contains the following functions**
-
-"""
-
 
 import numpy as np
-
 # import pkg_resources
 # import matplotlib.pyplot as plt
 # from scipy.signal.windows import general_hamming as hamming
@@ -22,13 +54,12 @@ import numpy as np
 # Helper functions:
 #
 ############################################################
-
 # def power_array(Pk, k):
 #     return np.where(k!=0, Pk(k), 0)
 #     #return np.where(k==0, 0, Pk(k))
 
 def gauss_var(size, seed=None):
-    '''It generates a complex Gaussian random variable with zero mean and unit variance
+    """Generates a complex Gaussian random variable in Fourier space with zero mean and unit variance.
     
     Parameters
     ----------
@@ -41,7 +72,7 @@ def gauss_var(size, seed=None):
     -------
         a complex number.
     
-    '''
+    """
     if seed is not None:
         np.random.seed(seed)
     
@@ -53,21 +84,26 @@ def gauss_var(size, seed=None):
     return a * (np.cos(e) + 1j * np.sin(e))
 
 def dealiasx(f, kmaxknyq_ratio=(2/3)):
-    '''> If the wavenumber is less than or equal to the maximum wavenumber, keep the Fourier coefficient.
-    Otherwise, set it to zero
+    """Dealias a real space field and return the de-aliased field in real space domain.
+     
+    Set the Fourier coefficients to zero if the wavenumber is greater than the maximum wavenumber (kmax), defined to be 2/3 of the Nyquist frequency.
     
     Parameters
     ----------
     f
-        the input array
-    kmaxknyq_ratio
+        Input field in real space.
+    kmaxknyq_ratio : float, optional
         The ratio of the maximum wavenumber to the Nyquist wavenumber.
     
     Returns
     -------
-        the inverse Fourier transform of the input array.
-    
-    '''
+    ff
+        The de-aliased field in real space.
+
+    Notes
+    -----
+    The 2/3 ratio is commonly used in the literature.
+    """
 
     N = f.size
     knyq = N//2
@@ -84,25 +120,30 @@ def dealiasx(f, kmaxknyq_ratio=(2/3)):
     return ff
 
 def dealiask(N, fk, k, kmaxknyq_ratio=(2/3)):
-    '''If the wavenumber is less than or equal to the maximum wavenumber, then keep the value of the
-    Fourier transform. Otherwise, set it to zero
-    
+    """Dealias a Fourier space field and return the de-aliased field in Fourier space domain.
+
+    Set the Fourier coefficients to zero if the wavenumber is greater than the maximum wavenumber (kmax), defined to be 2/3 of the Nyquist frequency.
+
     Parameters
     ----------
     N
-        the number of points in the signal
+        The size of the real field array.
     fk
-        the fourier transform of the image
+        Input field in Fourier space.
     k
-        the wavenumber array
-    kmaxknyq_ratio
-        the ratio of the maximum wavenumber to the Nyquist wavenumber.
-    
+        Array of wavenumbers.
+    kmaxknyq_ratio : float, optional
+        The ratio of the maximum wavenumber to the Nyquist wavenumber.
+
     Returns
     -------
-        the Fourier transform of the input signal.
-    
-    '''
+    fk
+        The de-aliased field in Fourier space.
+
+    Notes
+    -----
+    The 2/3 ratio is commonly used in the literature.
+    """
 
     knyq = N//2
     kmax = int( kmaxknyq_ratio * knyq )
@@ -113,37 +154,38 @@ def dealiask(N, fk, k, kmaxknyq_ratio=(2/3)):
     return fk
 
 
-
-
 ############################################################
 #
-# Zeta GRFs:
+# 1D \zeta GRF:
 #
 ############################################################
-
 def pk_primordial_1d(k, amplitude=1.0, n_s=1.0):
-    '''It returns the primordial power spectrum in 1D
+    """Returns the primordial power spectrum for a pure 1D \zeta GRF.
 
     This is a function that returns the primordial power spectrum in 1D.
     It is a one-parameter model of the primordial power spectrum.
     It is a power law with a scale-invariant power spectrum.
-    The power law is of the form P(k) = (k^ns - 1.0)
+    The power law is of the form P(k) = (pi/k) * A * k^(n_s-1), where 
+    k is the wavenumber, A is the amplitude, and n_s is the spectral index.
     
     Parameters
     ----------
     k
-        The wavenumber.
-    amplitude
-        This is the amplitude of the power spectrum.
-    n_s
-        The spectral index of the primordial power spectrum.
+        Array of wavenumbers.
+    amplitude : float, optional
+        Amplitude of the primordial power spectrum.
+    n_s : float, optional
+        Spectral index of the primordial power spectrum.
     
     Returns
     -------
-        The power spectrum.
+    power_spectrum
+        The primordial power spectrum.
     
-    TODO: Need to put into the GRF (g): tilt and amplitude 
-    '''
+    TODO
+    ----
+    Need to put into the GRF (g): tilt and amplitude 
+    """
     if np.isscalar(k):
         k = np.array([k])
 
@@ -155,18 +197,18 @@ def pk_primordial_1d(k, amplitude=1.0, n_s=1.0):
     return power_spectrum
 
 def grf_zeta_1d(N, pk_amp=1.0, pk_ns=1.0, kmaxknyq_ratio=2/3, seed=None):
-    """Generate a 1D Gaussian random field with power spectrum given by
+    """Generate a 1D \zeta GRF with power spectrum given by
     the primordial power spectrum.
 
     Parameters
     ----------
     N : int
         Size of the input array.
-    pk_amp : float
+    pk_amp : float, optional
         Amplitude of the primordial power spectrum.
-    pk_ns : float
+    pk_ns : float, optional
         Spectral index of the primordial power spectrum.
-    kmaxknyq_ratio : float
+    kmaxknyq_ratio : float, optional
         Ratio of kmax to the Nyquist frequency. The Nyquist frequency is
         given by np.pi * N. The default value of 2/3 is consistent with
         the usual practice of simulating a 2D field with a 1D FFT.
@@ -176,8 +218,11 @@ def grf_zeta_1d(N, pk_amp=1.0, pk_ns=1.0, kmaxknyq_ratio=2/3, seed=None):
 
     Returns
     -------
-    (out - m) / s : ndarray
-        Gaussian random field in real space.
+    zeta
+        The mean-subtracted, variance-normalized \zeta GRF.
+
+    Notes
+    -----
 
     """
     if not np.isfinite(N):
@@ -223,21 +268,66 @@ def grf_zeta_1d(N, pk_amp=1.0, pk_ns=1.0, kmaxknyq_ratio=2/3, seed=None):
     return (out - m) / s
 
 
-
+############################################################
+#
+# 1D Line-of-Sight \zeta GRF from P_k for 3D GRF:
+#
+############################################################
 def pk_primordial_3d(k, amp=1.0, ns=1.0):
-    """
+    """Returns the primordial power spectrum for a 3D \zeta GRF.
 
-    TODO: Need to put into the GRF (g): tilt and amplitude 
+    Parameters
+    ----------
+    k
+        Array of wavenumbers.
+    amp : float, optional
+        Amplitude of the primordial power spectrum.
+    ns : float, optional
+        Spectral index of the primordial power spectrum.
+
+    Returns
+    -------
+    pk
+        The primordial power spectrum in 3D.
+
+    Notes
+    -----
+    The power spectrum is given by P(k) = (2*pi^2) * A * k^(n_s-1) / k^3.
+
+    TODO
+    ----
+    Need to put into the GRF (g): tilt and amplitude 
     """
 
     pk = np.where(k!=0, (2*np.pi**2) * (amp * (k**(ns-1.0))) / (k**3), 0) # Power spectrum
 
     return pk
 
-# To generate 1D gaussian random field
+# To generate 1D \zeta GRF
 def grf_zeta_3d_los1d(N, pk_amp=1.0, pk_ns=1.0, seed=None):
-    """
+    """Generate a 1D \zeta GRF from the power spectrum for a 3D
+    \zeta GRF (acts as a line-of-sight 1D strip).
+
+    Parameters
+    ----------
+    N : int
+        Size of the real space field.
+    pk_amp : float, optional
+        Amplitude of the primordial power spectrum.
+    pk_ns : float, optional
+        Spectral index of the primordial power spectrum.
+    seed : int, optional
+        Seed for the random number generator. If set to None, the seed is
+        set to 0.
+
+    Returns
+    -------
+    zeta
+        The variance-normalized \zeta GRF.        
     
+    Notes
+    -----
+
     """
 
     size = N//2+1 # Size of field is halved (floor division)
@@ -263,13 +353,31 @@ def grf_zeta_3d_los1d(N, pk_amp=1.0, pk_ns=1.0, seed=None):
 
 ############################################################
 #
-# Chi_e GRFS:
+# 1D \chi_e^2 Field:
 #
 ############################################################
-
 def pk_chi_1d(k, amp, R, B=0.0):
-    """ Power spectrum of 1D Chi_e.
+    r"""Returns the power spectrum for a 1D \chi_e^2 GRF.
 
+    Parameters
+    ----------
+    k
+        Array of wavenumbers.
+    amp
+        Amplitude of the primordial power spectrum.
+    R
+        Parameter for the power spectrum.
+    B : float, optional
+        Parameter for the power spectrum.
+
+    Returns
+    -------
+    pk
+        The power spectrum in 1D.
+
+    Notes
+    -----
+    The power spectrum is given by P(k) = (pi / k) * A * R^2 * k^2 * (exp(-R^2 * k^2) + B).
     """
 
     # 
@@ -278,7 +386,31 @@ def pk_chi_1d(k, amp, R, B=0.0):
     return pk
 
 def grf_chi_1d(N, pk_amp, pk_R, pk_B=0.0, kmaxknyq_ratio=2/3, seed=None):
-    """ Generate 1D Chi_e.
+    r"""Generate a 1D \chi_e^2 GRF from the power spectrum.
+
+    Parameters
+    ----------
+    N : int
+        Size of the real space field.
+    pk_amp
+        Amplitude of the primordial power spectrum.
+    pk_R
+        Parameter for the power spectrum.
+    pk_B : float, optional
+        Parameter for the power spectrum.
+    kmaxknyq_ratio : float, optional
+        Ratio of the maximum wavenumber to the Nyquist wavenumber.
+    seed : int, optional
+        Seed for the random number generator. If set to None, the seed is
+        set to 0.
+
+    Returns
+    -------
+    chi
+        The mean-subtracted, variance-normalized \chi_e^2 GRF.
+
+    Notes
+    -----
 
     """
     
@@ -309,20 +441,64 @@ def grf_chi_1d(N, pk_amp, pk_R, pk_B=0.0, kmaxknyq_ratio=2/3, seed=None):
     return out
 
 
-
-
+############################################################
+#
+# 1D Line-of-Sight \chi_e^2 Field from P_k for 3D \chi_e^2 Field:
+#
+############################################################
 def pk_chi_3d(k, amp, R, B=0.0):
-    """ Power spectrum of 3D Chi_e.
+    r"""Returns the power spectrum for a 3D \chi_e^2 GRF.
+    
+    Parameters
+    ----------
+    k
+        Array of wavenumbers.
+    amp
+        Amplitude of the primordial power spectrum.
+    R
+        Parameter for the power spectrum.
+    B : float, optional
+        Parameter for the power spectrum.
 
+    Returns
+    -------
+    pk
+        The 3D power spectrum.
+
+    Notes
+    -----
+    The power spectrum is given by P(k) = (2*pi^2 / k^3) * A * R^2 * k^2 * exp(-R^2 * k^2 + B).
     """
 
     pk = np.where(k!=0, ( (2*np.pi**2) / k**3 ) * amp * (R * k)**2 * np.exp( (- R**2 * k**2) + B), 0) # Power spectrum
     
     return pk
 
-
 def grf_chi_3d_los1d(N, pk_amp, pk_R, pk_B=0.0, seed=None):
-    """ Generate 1D, 'Line-Of-Sight' Chi_e from 3D Chi_e.
+    r"""Generate a 1D, 'Line-Of-Sight' \chi_e^2 GRF from the power spectrum 
+    generated for a 3D \chi_e^2 GRF.
+
+    Parameters
+    ----------
+    N : int
+        Size of the real space field.
+    pk_amp
+        Amplitude of the primordial power spectrum.
+    pk_R
+        Parameter for the power spectrum.
+    pk_B : float, optional
+        Parameter for the power spectrum.
+    seed : int, optional
+        Seed for the random number generator. If set to None, the seed is
+        set to 0.
+
+    Returns
+    -------
+    chi
+        The variance-normalized \chi_e^2 GRF.
+
+    Notes
+    -----
 
     """
     

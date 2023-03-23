@@ -1,7 +1,6 @@
-"""
-// Created by Jibran Haider. //
-
-"""
+#
+# Created by Jibran Haider.
+#
 
 
 import numpy as np

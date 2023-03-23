@@ -1,5 +1,7 @@
+# 
+# Created by Jibran Haider & Tom Morrison.
+# 
 """ Generate Non-Gaussian Primodial Fields.
-// Created by Jibran Haider & Tom Morrison. //
 
 ### Non-Gaussian Components of Fields:
 <b>Set parameters and initialize the non-Gaussian components that will be added to the $\zeta$ GRFs.</b>
