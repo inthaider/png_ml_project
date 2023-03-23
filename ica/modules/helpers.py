@@ -37,6 +37,12 @@ def resid(a, b):
     TODO:
         FILL IN WHY I CHOSE TO COMPUTE $RV$ & $RR$ THIS WAY!
     """
+    if a is None or b is None:
+        return None
+
+    if len(a) == 0 or len(b) == 0:
+        return None
+
     a_std = np.std(a)
     a_mean = np.mean(a)
     b_std = np.std(b)

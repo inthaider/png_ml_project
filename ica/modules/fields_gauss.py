@@ -28,6 +28,20 @@ import numpy as np
 #     #return np.where(k==0, 0, Pk(k))
 
 def gauss_var(size, seed=None):
+    '''It generates a complex Gaussian random variable with zero mean and unit variance
+    
+    Parameters
+    ----------
+    size
+        the size of the output array
+    seed
+        the seed for the random number generator. If None, then the random number generator is not seeded.
+    
+    Returns
+    -------
+        a complex number.
+    
+    '''
     if seed is not None:
         np.random.seed(seed)
     
@@ -39,9 +53,21 @@ def gauss_var(size, seed=None):
     return a * (np.cos(e) + 1j * np.sin(e))
 
 def dealiasx(f, kmaxknyq_ratio=(2/3)):
-    """
+    '''> If the wavenumber is less than or equal to the maximum wavenumber, keep the Fourier coefficient.
+    Otherwise, set it to zero
     
-    """
+    Parameters
+    ----------
+    f
+        the input array
+    kmaxknyq_ratio
+        The ratio of the maximum wavenumber to the Nyquist wavenumber.
+    
+    Returns
+    -------
+        the inverse Fourier transform of the input array.
+    
+    '''
 
     N = f.size
     knyq = N//2
@@ -58,9 +84,25 @@ def dealiasx(f, kmaxknyq_ratio=(2/3)):
     return ff
 
 def dealiask(N, fk, k, kmaxknyq_ratio=(2/3)):
-    """
+    '''If the wavenumber is less than or equal to the maximum wavenumber, then keep the value of the
+    Fourier transform. Otherwise, set it to zero
     
-    """
+    Parameters
+    ----------
+    N
+        the number of points in the signal
+    fk
+        the fourier transform of the image
+    k
+        the wavenumber array
+    kmaxknyq_ratio
+        the ratio of the maximum wavenumber to the Nyquist wavenumber.
+    
+    Returns
+    -------
+        the Fourier transform of the input signal.
+    
+    '''
 
     knyq = N//2
     kmax = int( kmaxknyq_ratio * knyq )
@@ -79,47 +121,103 @@ def dealiask(N, fk, k, kmaxknyq_ratio=(2/3)):
 #
 ############################################################
 
-def pk_primordial_1d(k, amp=1.0, ns=1.0):
-    """
+def pk_primordial_1d(k, amplitude=1.0, n_s=1.0):
+    '''It returns the primordial power spectrum in 1D
 
+    This is a function that returns the primordial power spectrum in 1D.
+    It is a one-parameter model of the primordial power spectrum.
+    It is a power law with a scale-invariant power spectrum.
+    The power law is of the form P(k) = (k^ns - 1.0)
+    
+    Parameters
+    ----------
+    k
+        The wavenumber.
+    amplitude
+        This is the amplitude of the power spectrum.
+    n_s
+        The spectral index of the primordial power spectrum.
+    
+    Returns
+    -------
+        The power spectrum.
+    
     TODO: Need to put into the GRF (g): tilt and amplitude 
-    """
-    
-    pk = (np.pi / k) * amp * (k**(ns-1.0)) # Power spectrum
+    '''
+    if np.isscalar(k):
+        k = np.array([k])
 
-    return pk
+    if np.any(k < 0):
+        raise ValueError("k must be greater than 0.")
 
-# To generate 1D gaussian random field
+    power_spectrum = (np.pi / k) * amplitude * (k**(n_s-1.0)) # Power spectrum
+
+    return power_spectrum
+
 def grf_zeta_1d(N, pk_amp=1.0, pk_ns=1.0, kmaxknyq_ratio=2/3, seed=None):
+    """Generate a 1D Gaussian random field with power spectrum given by
+    the primordial power spectrum.
+
+    Parameters
+    ----------
+    N : int
+        Size of the input array.
+    pk_amp : float
+        Amplitude of the primordial power spectrum.
+    pk_ns : float
+        Spectral index of the primordial power spectrum.
+    kmaxknyq_ratio : float
+        Ratio of kmax to the Nyquist frequency. The Nyquist frequency is
+        given by np.pi * N. The default value of 2/3 is consistent with
+        the usual practice of simulating a 2D field with a 1D FFT.
+    seed : int, optional
+        Seed for the random number generator. If set to None, the seed is
+        set to 0.
+
+    Returns
+    -------
+    (out - m) / s : ndarray
+        Gaussian random field in real space.
+
     """
-    
-    """
+    if not np.isfinite(N):
+        raise ValueError("N must be finite.")
+    N = int(N)
+    if N <= 0:
+        raise ValueError("N must be positive.")
+    if not np.isfinite(pk_amp):
+        raise ValueError("pk_amp must be finite.")
+    if pk_amp <= 0:
+        raise ValueError("pk_amp must be positive.")
+    if not np.isfinite(pk_ns):
+        raise ValueError("pk_ns must be finite.")
+    if pk_ns <= -2:
+        raise ValueError("pk_ns must be larger than -2.")
+    if not np.isfinite(kmaxknyq_ratio):
+        raise ValueError("kmaxknyq_ratio must be finite.")
+    if kmaxknyq_ratio < 0:
+        raise ValueError("kmaxknyq_ratio must be non-negative.")
+    if not np.isfinite(seed):
+        raise ValueError("seed must be finite.")
+    if seed is not None:
+        seed = int(seed)
+    if seed < 0:
+        raise ValueError("seed must be non-negative.")
 
     grid = np.fft.rfftfreq(N) * N
     size = np.fft.rfftfreq(N).size
-    # size = N//2+1 # Size of field is halved (floor division)
-    # grid = np.arange(0, size) # 1D array with k-space positions
 
-    grd = gauss_var(size, seed) # Gaussian random deviate in Fourier(k)-spae
+    grd = gauss_var(size, seed)
     zk = np.zeros_like(grd)
-
-    # g = np.random.normal(0, 1, size=size)
-    # print(power_array_new(grid, 1))
-    # print(np.sqrt(power_array_new(grid, 1)))
 
     zk[0] = 0
     zk[1:] = grd[1:] * np.sqrt( (2*np.pi / N) * pk_primordial_1d(grid[1:], pk_amp, pk_ns) )
     
-    # plt.plot(grid, np.abs(zk))
-    # plt.show()
-
     kmnr = kmaxknyq_ratio
     zk = dealiask(N, zk, grid, kmnr)
 
-    # g =  np.where(grid!=0, g * np.sqrt(grid), 0) 
-
-    out = np.fft.irfft(zk, N) # inverse FT --> out is GRF in real space
-    s = np.std(out) # standard deviation
+    out = np.fft.irfft(zk, N)
+    s = np.std(out)
     m = np.mean(out)
 
     return (out - m) / s

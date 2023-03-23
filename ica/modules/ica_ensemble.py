@@ -64,7 +64,7 @@ def ica_prewhiten(mix_signal, kbin_size=None):
 
     s1ft = np.fft.rfft(s1_pre)
     s2ft = np.fft.rfft(s2_pre)
-    kfreq = np.fft.rfftfreq(size) * size
+    kfreq = np.fft.rfftfreq(size) * size # type: ignore
     k_size = kfreq.size
     # k_size = size//2 + 1
     
@@ -146,7 +146,7 @@ def fastica_run(mix, num_comps, max_iter=1e4, tol=1e-5,
     """
     
     # , white='unit-variance'
-    transformer = FastICA(n_components=num_comps, algorithm=algo, whiten=whiten, max_iter=max_iter, tol=tol, fun=fun)
+    transformer = FastICA(n_components=num_comps, algorithm=algo, whiten=whiten, max_iter=max_iter, tol=tol, fun=fun) # type: ignore
 
     # run FastICA on observed (mixed) signals
     sources = transformer.fit_transform(mix.T)
