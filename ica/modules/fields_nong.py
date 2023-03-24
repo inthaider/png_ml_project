@@ -39,6 +39,9 @@ def nong_chisq(N, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_ratio=2
     # Bchi = ?
     #
 
+    Notes
+    -----
+    This makes the ng_chisq and grf_chisq fields correlated to each other.
     """
 
     kmnr = kmaxknyq_ratio
@@ -46,8 +49,8 @@ def nong_chisq(N, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_ratio=2
     #
     # FINAL CHI_e^2 NON-G COMPONENT
     #
-    grfchi = grf.grf_chi_1d(N, Achi, Rchi, Bchi, kmaxknyq_ratio=kmnr, seed=seedchi)
-    ng_chisq = Fng * (grfchi)**2
+    grf_chisq = grf.grf_chi_1d(N, Achi, Rchi, Bchi, kmaxknyq_ratio=kmnr, seed=seedchi)
+    ng_chisq = Fng * (grf_chisq)**2
     ng_chisq = grf.dealiasx(ng_chisq, kmaxknyq_ratio=kmnr)
 
     # s = np.std(ng_chisq)
@@ -56,7 +59,7 @@ def nong_chisq(N, Achi=10**(-10), Rchi=0.04, Bchi=0.0, Fng=1.0, kmaxknyq_ratio=2
     # s = np.std(ng_chisq)
     # ng_chisq = (ng_chisq / s)
 
-    return ng_chisq, grfchi
+    return ng_chisq, grf_chisq
 
 
 ### Asymmetric $\sinh$ non-Gaussianity
