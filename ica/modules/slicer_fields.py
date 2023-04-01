@@ -105,12 +105,17 @@ class Slicer1D:
     def slice_1d(self, is_rand_axes : bool = True):    
         """Extract 1D strips from the 3D fields.
 
-        Args:
-            field_3d (list): 3D fields from which to extract a 1D strip.
-            indices (tuple): List of indices to slice 3D field-array with.
-        
-        Returns:
-            fields_1d (): 1D strips corresponding to list of 3D fields in 'field_3d'.
+        Parameters
+        ----------
+        field_3d : list
+            3D fields from which to extract a 1D strip.
+        indices : tuple
+            List of indices to slice 3D field-array with.
+
+        Returns
+        -------
+        fields_1d : list
+            1D strips corresponding to list of 3D fields in 'field_3d'.
         """
 
         indices = self.idx_rand_slice(is_rand_axes)
@@ -125,15 +130,18 @@ class Slicer1D:
     def idx_rand_slice(self, is_rand_axes : bool = True):
         """Generate random indices to take 1D slice from 3D field.
 
-        Args:
-            idx_seed (int): Reseed the MT19937 BitGenerator.
-            is_rand_axes (bool): Whether to randomize axes or not. Defaults to True.
-            
-        
-        Returns:
-            coords (tuple): List of indices to slice 3D field-array with.
+        Parameters
+        ----------
+        idx_seed : int
+            Reseed the MT19937 BitGenerator.
+        is_rand_axes : bool
+            Whether to randomize axes or not. Defaults to True.
+
+        Returns
+        -------
+        coords : tuple
+            List of indices to slice 3D field-array with.
         """
-        
         seed = self.idx_seed
         side_length = self.side_length
 
@@ -217,17 +225,22 @@ class Slicer2D:
     def slice_2d(self, is_rand_axes : bool = True, isDelta=False):    
         """Extract 1D strips from the 3D fields.
 
-        Args:
-            field_3d (list): 3D fields from which to extract a 1D strip.
-            indices (tuple): List of indices to slice 3D field-array with.
+        Parameters
+        ----------
+        field_3d : list
+            3D fields from which to extract a 1D strip.
+        indices : tuple
+            List of indices to slice 3D field-array with.
+
+        Returns
+        -------
+        fields_1d : list
+            1D strips corresponding to list of 3D fields in 'field_3d'.
         
-        Returns:
-            fields_1d (): 1D strips corresponding to list of 3D fields in 'field_3d'.
-
-        TODO:
-            Write necessary code to be able to turn Delta fields processing on or off.
+        TODO
+        ----
+        Write necessary code to be able to turn Delta fields processing on or off.
         """
-
         self.idx_rand_slice(is_rand_axes)
         
         indices = self.indices
@@ -241,15 +254,18 @@ class Slicer2D:
     def idx_rand_slice(self, is_rand_axes : bool = True):
         """Generate random indices to take 2D slice from 3D field.
 
-        Args:
-            idx_seed (int): Reseed the MT19937 BitGenerator.
-            is_rand_axes (bool): Whether to randomize axes or not. Defaults to True.
-            
-        
-        Returns:
-            coords (tuple): List of indices to slice 3D field-array with.
-        """
-        
+        Parameters
+        ----------
+        idx_seed : int
+            Reseed the MT19937 BitGenerator.
+        is_rand_axes : bool
+            Whether to randomize axes or not. Defaults to True.
+
+        Returns
+        -------
+        coords : tuple
+            List of indices to slice 3D field-array with.
+        """        
         seed = self.idx_seed
         side_length = self.side_length
 

@@ -5,7 +5,7 @@
 
 Examples
 --------
-TESTI'm currently setup to run in terminal with a command::
+I'm currently setup to run in terminal with a command::
 
     $ python3 
 

@@ -9,7 +9,7 @@ import scipy.stats as stats
 # sklearn module contains contains a FastICA capability. We can choose the cost function (measure of non-Gaussianity): cube for kurtosis and logcosh for negentropy approximation.
 from sklearn.decomposition import FastICA
 
-from modules.helpers import resid
+from modules.validate_1d import calculate_residuals as resid
 
 # import importlib as il
 # import matplotlib.pyplot as plt 
@@ -159,8 +159,6 @@ def fastica_run(mix, num_comps, max_iter=1e4, tol=1e-5,
 # POST-ICA PROCESSING
 #
 ############################################################
-
-
 def ica_swap(source_comps, ica_src):
     """
     
@@ -174,8 +172,8 @@ def ica_swap(source_comps, ica_src):
     ica0 = ica_sources[0, :]
     ica1 = ica_sources[1, :]
 
-    dist_ng0, _ = resid(srcng, ica0)
-    dist_ng1, _ = resid(srcng, ica1)
+    dist_ng0 = resid(srcng, ica0)
+    dist_ng1 = resid(srcng, ica1)
     # dist_ng0 = np.linalg.norm(srcng**2 - ica0**2, 1)
     # dist_ng1 = np.linalg.norm(srcng**2 - ica1**2, 1)
     dist_g0 = np.linalg.norm(srcg**2 - ica0**2, 1)

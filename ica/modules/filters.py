@@ -2,13 +2,41 @@
 # Created by Jaafar.
 # Modified by Jibran Haider.
 # 
+"""This module contains functions for filtering given fields with different window functions.
 
+Routine Listings
+----------------
+window_tophat(g, N, k_low, k_up)
+    Apply top hat window filter in k-space.
+window_hamm(g, N, k_low, k_high)
+    Apply Hamming window filter in k-space.
+window_hann(kbins)
+    Create Hann window filters in k-space.
+window_conv(gk, k, filt_win, kstart, kstop)
+    Helper function for applying a given window filter in k-space.
+
+filter_hann(g, nkbins=5, k_min=None, k_max=None, dc_comp=False)
+    Apply the Hann window filters in k-space for a given number of bins.
+filterhann_ica(field_g, field_ng, 
+            k_min=None, k_max=None, kmaxknyq_ratio=(2/3), nkbins=5, dc=False,
+                max_iter=1e4, tol=1e-5, fun='logcosh', whiten='unit-variance', algo='parallel', 
+                    prewhiten = False, wbin_size = None)
+    Apply the Hann window filters in k-space for a given number of bins and perform ICA on the filtered fields.
+
+filterhat_gng(g_field, ng_field, size, k_low, k_high)
+    Apply top hat window filter in k-space for a given range of k-bins.
+filterhat_ica(field_g, field_ng,
+            k_min=None, k_max=None, kmaxknyq_ratio=(2/3), nkbins=5, dc=False,
+                max_iter=1e4, tol=1e-5, fun='logcosh', whiten='unit-variance', algo='parallel',
+                    prewhiten = False, wbin_size = None)
+    Apply top hat window filter in k-space for a given range of k-bins and perform ICA on the filtered fields.
+"""
 
 import numpy as np
 from scipy.signal.windows import hann
 from scipy.signal.windows import general_hamming as hamming
 
-from modules.ica import ica_all
+from ica.modules.ica_1d import ica_all
 
 # import importlib as il
 # import matplotlib.pyplot as plt 
@@ -144,9 +172,8 @@ def window_conv(gk, k, filt_win, kstart, kstop):
 # FILTER STUFF
 #
 ############################################################
-
 def filter_hann(g, nkbins=5, k_min=None, k_max=None, dc_comp=False):
-    """Filtering.
+    """Apply the Hann window filters in k-space for a given number of bins.
 
     """
 
@@ -227,12 +254,11 @@ def filter_hann(g, nkbins=5, k_min=None, k_max=None, dc_comp=False):
 ##############################
 # FILTERED ICA
 ##############################
-
 def filterhann_ica(field_g, field_ng, 
                 k_min=None, k_max=None, kmaxknyq_ratio=(2/3), nkbins=5, dc=False,
                     max_iter=1e4, tol=1e-5, fun='logcosh', whiten='unit-variance', algo='parallel', 
                         prewhiten = False, wbin_size = None):
-    """
+    """Apply ICA to Hann-filtered fields in k-space for a given number of bins.
 
     """
 

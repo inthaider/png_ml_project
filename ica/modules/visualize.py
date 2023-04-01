@@ -1,16 +1,13 @@
 #
 # Created by Jibran Haider.
 #
-"""Helper functions for ICA.
+r"""Visualization functions for ICA.
 
-This module contains helper functions for ICA that can be used to calculate
-residuals between two vectors, plot source components and ICA-separated
-signals, and plot the ICA filter used for $kf$-ICA separation.
+This module contains helper functions for ICA that can be used to plot source components and ICA-separated
+signals and plot the ICA filter used for $kf$-ICA separation.
 
 Routine Listings
 ----------------
-resid(a, b)
-    Compute both scalar & vector residuals between $a$ & $b$.
 plt_icaflt(src, ica_src, kc, max_amps, fontsize=8)
     Plot source components and ICA-separated signals
 plt_filters(ica, kc, max_amps, fontsize=8)
@@ -22,82 +19,11 @@ ica.modules.ica
 
 Notes
 -----
-1) The function `resid` is used to calculate the scalar & vector residuals
-        between two vectors.
-2) The function `plt_icaflt` is used to plot the source components and
-        ICA-separated signals.
-3) The function `plt_filters` is used to plot the ICA filter used for
-        $kf$-ICA separation.
 
 """
 
 import numpy as np
 import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
-
-
-def resid(a, b):
-    """Compute both scalar & vector residuals between $a$ & $b$.
-
-    Args:
-        a (np.ndarray): Vector $a$.
-        b (np.ndarray): Vector $b$. Must be same shape as $a$.
-        
-    Returns:
-        rr (float): Scalar residual of $a$ and $b$ (see below).
-        rv (np.ndarray): Vector residual of $a$ and $b$ (see below).
-
-    Notes:
-        Scalar residual $r$ is defined as:
-            $r = 1 - \frac{\left\|a\right\|_2}{\left\|b\right\|_2}$
-        Vector residual $r_v$ is defined as:
-            $r_v = 1 - \frac{\left\|a\right\|_2}{\left\|b\right\|_2}$
-        where $\left\|a\right\|_2$ is the 2-norm of $a$ and $\left\|b\right\|_2$ is the 2-norm of $b$.
-        Details:
-            1) Normalize $b$ by mean-subtraction & std-division.
-            2) Rescale $b$ by $a$'s std.
-            3) The vector residual ($rv$) is calculated as:
-                rv = ( ( b.a / a.a ) * a ) / |a|
-            4) The scalar residual ($rr$) is calculated as:
-                rr = 1 - | ( b.a / |a| ) / |a| |
-            Note that:
-                |x| = (x.x)^{1/2}
-            where $x$ is a vector.
-
-    TODO:
-        FILL IN WHY I CHOSE TO COMPUTE $RV$ & $RR$ THIS WAY!
-    """
-    if a is None or b is None:
-        return None
-
-    if len(a) == 0 or len(b) == 0:
-        return None
-
-    a_std = np.std(a)
-    a_mean = np.mean(a)
-    b_std = np.std(b)
-    b_mean = np.mean(b)
-    
-    b = ((b - b_mean) / b_std) 
-    b = b * a_std
-
-    bdota = np.dot(b, a)
-    adota = np.dot(a, a)
-    amag = np.sqrt(adota)
-
-    rv = ( (bdota / adota) * a ) / amag
-    # rv = 1 - (bdota / adota)
-    r = np.linalg.norm(rv, 2)
-
-    anorm = np.linalg.norm(a, 2)
-    bnorm = np.linalg.norm(b, 2)
-
-    rr = 1 - np.abs(((bdota / amag) / amag))
-    # rr = 1 - r
-
-    # ab = np.abs(1 - anorm / bnorm)
-
-    return rr, rv
-
 
 def plt_icaflt(src, ica_src, kc, max_amps, fontsize=8):
     '''Plot source components and ICA-separated signals
