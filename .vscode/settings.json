@@ -3,5 +3,14 @@
     "python.analysis.typeCheckingMode": "off",
     "docwriter.style": "NumPy",
     "docwriter.progress.trackClasses": true,
-    "docwriter.progress.trackTypes": true
+    "docwriter.progress.trackTypes": true,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/ica",
+        "${workspaceFolder}/"
+    ],
+    "python.autoComplete.extraPaths": [
+
+        // "/usr/local/bin/"
+    ],
+    
 }

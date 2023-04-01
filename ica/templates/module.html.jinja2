@@ -1,0 +1,33 @@
+{% extends "default/module.html.jinja2" %}
+
+{% block title %}
+    {% if module.modulename == 'modules' %}
+        {{ project_name }} Modules API documentation
+    {% else %}
+        {{ module.modulename }} API documentation
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if module.modulename == 'modules' %}
+        <main class="pdoc">
+            {% block modules_body %}
+                <section>
+                    <h2>Submodules</h2>
+                    <ul>
+                        {% for submodule in module.submodules if is_public(submodule) | trim %}
+                            <li>
+                                <h3>{{ submodule.name }}</h3>
+                                {% if submodule.docstring %}
+                                    <div class="docstring">{{ submodule.docstring | to_markdown | to_html | linkify(namespace=submodule.qualname) }}</div>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endblock %}
+        </main>
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}
