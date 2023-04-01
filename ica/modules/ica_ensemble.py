@@ -1,27 +1,12 @@
 # 
 # Created by Jibran Haider.
 #
-
-
+"""
+"""
 import numpy as np
 import scipy.stats as stats
-# Independent Component Analysis
-# sklearn module contains contains a FastICA capability. We can choose the cost function (measure of non-Gaussianity): cube for kurtosis and logcosh for negentropy approximation.
-from sklearn.decomposition import FastICA
-
 from modules.validate_1d import calculate_residuals as resid
-
-# import importlib as il
-# import matplotlib.pyplot as plt 
-# plt.rcParams.update({'font.size': 12}) 
-# import matplotlib.gridspec as grd
-# import pickle
-# import nbodykit.lab as nbkt
-# import modules.peaks as px
-# import modules.correlationfunctions as cf
-# import modules.gaussianfield as grf
-# import modules.ica as ica
-
+from sklearn.decomposition import FastICA
 
 ############################################################
 #

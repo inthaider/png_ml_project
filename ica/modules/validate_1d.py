@@ -36,7 +36,6 @@ Notes
 import numpy as np
 from scipy.stats import pearsonr
 
-
 def calculate_all_metrics(true_field, extracted_field, round=None, is_print=True, norm=True, relative=True):
     r"""Calculate and print all metrics in validate_1d.py for a pair of fields.
 

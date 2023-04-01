@@ -41,12 +41,6 @@ Change the numpy random seed generation to the new, recommended method.
 """
 
 import numpy as np
-# import pkg_resources
-# import matplotlib.pyplot as plt
-# from scipy.signal.windows import general_hamming as hamming
-# from scipy.signal.windows import hann
-# import modules.jaafar_fouriertransform as ft
-
 
 ############################################################
 #

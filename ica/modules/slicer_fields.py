@@ -34,20 +34,13 @@ TODO
 Write necessary code to be able to turn Delta fields processing on or off.
 
 """
-
 #----Import modules----#
+from pathlib import Path        # For path manipulations and module loading
 
-from pathlib import Path # For path manipulations and module loading
-
-import numpy as np
-import numpy.random as nprandom
-from numpy.random import seed as npseed
-from numpy.random import rand as nprand
-from numpy.random import randint as nprandint
-
-# import get_params
 import modules.init_fields as init_fields
-import modules.sim_params as sim_params
+import numpy.random as nprandom
+from numpy.random import randint as nprandint
+from numpy.random import seed as npseed
 
 #--------------------------------------------------#
 

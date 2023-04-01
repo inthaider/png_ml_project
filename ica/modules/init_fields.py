@@ -49,21 +49,14 @@ Example Peak-Patch realization:
 TODO
 ----
 Write necessary code to be able to turn Delta fields processing on or off.
-
 """
 
 #----Import modules----#
+from pathlib import Path  # For path manipulations and module loading
 
-from ast import Not
-from importlib.resources import path
-from pathlib import Path # For path manipulations and module loading
-
+import modules.sim_params as sim_params  # Local module for simulation parameters
 import numpy as np
 from numpy.random import randint as nprandint
-
-# Import local module 'get_params'
-# to import relevant field parameters.
-import modules.sim_params as sim_params
 
 #----Initialize variables----#
 

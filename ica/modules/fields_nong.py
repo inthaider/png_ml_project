@@ -33,7 +33,6 @@ The 'ng_chisq' non-G component is uncorrelated to both 'zng1' and 'zng2'
 
 import numpy as np
 import ica.modules.fields_gauss as grf
-# from . import fields_gauss as grf
 
 ############################################################
 #

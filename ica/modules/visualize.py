@@ -22,8 +22,9 @@ Notes
 
 """
 
+import matplotlib.pyplot as plt  # plt.rcParams.update({'font.size': 12})
 import numpy as np
-import matplotlib.pyplot as plt # plt.rcParams.update({'font.size': 12})
+
 
 def plt_icaflt(src, ica_src, kc, max_amps, fontsize=8):
     '''Plot source components and ICA-separated signals

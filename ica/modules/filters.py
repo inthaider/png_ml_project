@@ -33,23 +33,10 @@ filterhat_ica(field_g, field_ng,
 """
 
 import numpy as np
-from scipy.signal.windows import hann
 from scipy.signal.windows import general_hamming as hamming
+from scipy.signal.windows import hann
 
 from ica.modules.ica_1d import ica_all
-
-# import importlib as il
-# import matplotlib.pyplot as plt 
-# plt.rcParams.update({'font.size': 12}) 
-# import matplotlib.gridspec as grd
-# import pickle
-# import nbodykit.lab as nbkt
-# import modules.jaafar_fouriertransform as ft
-# import modules.jaafar_peaks as px
-# import modules.jaafar_correlationfunctions as cf
-# import modules.gaussianfield as grf
-# import modules.ica as ica
-
 
 ############################################################
 #
