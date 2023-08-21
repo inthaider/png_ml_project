@@ -325,7 +325,7 @@ def grf_chi_1d(N, pk_amp, pk_R, pk_B=0.0, kmaxknyq_ratio=2/3, seed=None):
     # print(np.abs(grd[0]))
 
     ck[0] = 0
-    ck[1:] = grd[1:] * np.sqrt( (2*np.pi / N) * pk_chi_1d(grid[1:], pk_amp, pk_R, pk_B))
+    ck[1:] = grd[1:] * np.sqrt( (2*np.pi / N) * pk_chi_1d(grid[1:], pk_amp, pk_R, pk_B) )
     # ck = np.where(grid!=0, grd * np.sqrt( (2*np.pi / N) * pk_chi_1d(grid[1:], pk_amp, pk_R, pk_B))
     # ck = grd * np.sqrt( (2*np.pi / N) * pk_chi_1d(grid, pk_amp, pk_R, pk_B))
 
@@ -433,7 +433,7 @@ def grf_chi_3d_los1d(N, pk_amp, pk_R, pk_B=0.0, seed=None):
 #     #return np.where(k==0, 0, Pk(k))
 
 def gauss_var(size, seed=None):
-    """Generates a complex Gaussian random variable in Fourier space with zero mean and unit variance.
+    """Uses the Box-Muller transform to generate a complex Gaussian random deviate in Fourier space with zero mean and unit variance.
     
     Parameters
     ----------

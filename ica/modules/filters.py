@@ -49,24 +49,17 @@ def window_tophat(g, N, k_low, k_up):
     """
     
     """
-    
     x = np.fft.rfft(g)
-    # print(x[0:10])
-
     k = np.fft.rfftfreq(N) * N
-    # print(k[0:10])
-
-    # print(k[:N//2])
 
     k_low = np.ones(np.shape(x))*k_low 
     k_up = np.ones(np.shape(x))*k_up
 
-    print('x[0] before:', np.abs(x[0]))
+    # print('x[0] before:', np.abs(x[0]))
     x = np.where(k!=0, (np.where(np.logical_and(np.less_equal(k, k_up), np.greater(k, k_low)), x, 0)), x)
-    print('x[0] after:', np.abs(x[0]))
+    # print('x[0] after:', np.abs(x[0]))
     
     x_inv = np.fft.irfft(x)
-
     return x_inv
 
 
