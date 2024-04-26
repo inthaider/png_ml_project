@@ -545,7 +545,7 @@ def calculate_pearson_coefficient(x, y):
 def biweight_midcorrelation(x, y):
     r"""Calculate the biweight midcorrelation between two fields, where $x$ is the source field and $y$ is the estimated field.
     
-    Biweight midcorrelation is a robust correlation measur between two variables $X$ and $Y$ based on the biweight midvariance, which is a robust alternative to the classical variance. It calculates the correlation between two variables while down-weighting the contribution of outliers. The biweight midcorrelation ranges from -1 to 1, similar to the Pearson correlation coefficient, with 1 indicating a perfect positive relationship, -1 a perfect negative relationship, and 0 no relationship.
+    Biweight midcorrelation is a robust correlation measure between two variables $X$ and $Y$ based on the biweight midvariance, which is a robust alternative to the classical variance. It calculates the correlation between two variables while down-weighting the contribution of outliers. The biweight midcorrelation ranges from -1 to 1, similar to the Pearson correlation coefficient, with 1 indicating a perfect positive relationship, -1 a perfect negative relationship, and 0 no relationship.
     The mathematical definition of the biweight midcorrelation is:
         $r_{bc} = \frac{\sum_{i=1}^{n} (x_i - \tilde{x})(y_i - \tilde{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \tilde{x})^2 \sum_{i=1}^{n} (y_i - \tilde{y})^2}}$
 
